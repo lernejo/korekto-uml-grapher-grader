@@ -12,6 +12,7 @@ import com.github.lernejo.korekto.toolkit.thirdparty.git.GitNature;
 import org.eclipse.jgit.api.ResetCommand;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -40,6 +41,13 @@ class UmlGrapherGraderTest {
     void setUp() {
         AtomicInteger counter = new AtomicInteger();
         LaunchingContext.RANDOM = i -> counter.incrementAndGet() % i; // deterministic behavior
+    }
+
+    @Test
+    void github_token_is_set() {
+        assertThat(System.getProperty("github_token"))
+            .as("github_token system property")
+            .isNotBlank();
     }
 
     @ParameterizedTest(name = "(branch={1}) {0}")

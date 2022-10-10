@@ -1,0 +1,44 @@
+package com.github.lernejo.korekto.grader.uml_grapher.mermaid;
+
+public enum TokenType {
+    EOL, EOF,
+    SPACE, COLON, COMMA,
+    PLUS, MINUS, SHARP, TILDE,
+    STAR, DOLLAR,
+    OPEN_CURLY_BRACKET, CLOSE_CURLY_BRACKET, OPEN_PARENTHESIS, CLOSE_PARENTHESIS,
+    COMMENT_DELIMITER,
+    ANNOTATION_START, ANNOTATION_END,
+
+    TEXT,
+
+    CLASS_DIAGRAM, CLASS, DIRECTION,
+
+    L_INHERITANCE, R_INHERITANCE,
+    L_COMPOSITION, R_COMPOSITION,
+    L_AGGREGATION, R_AGGREGATION,
+    L_ASSOCIATION, R_ASSOCIATION,
+    L_DEPENDENCY, R_DEPENDENCY,
+    L_REALIZATION, R_REALIZATION,
+    SOLID_LINK,
+    DASHED_LINK,
+    ;
+
+    static final TokenType[] ARROW_TYPES = new TokenType[]{
+        L_INHERITANCE, R_INHERITANCE,
+        L_COMPOSITION, R_COMPOSITION,
+        L_AGGREGATION, R_AGGREGATION,
+        L_ASSOCIATION, R_ASSOCIATION,
+        L_DEPENDENCY, R_DEPENDENCY,
+        L_REALIZATION, R_REALIZATION,
+        SOLID_LINK,
+        DASHED_LINK
+    };
+
+    static final TokenType[] VISIBILITIES = new TokenType[]{
+        PLUS, MINUS, SHARP, TILDE
+    };
+
+    static final TokenType[] CLASSIFIERS = new TokenType[]{
+        STAR, DOLLAR
+    };
+}

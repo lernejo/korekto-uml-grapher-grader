@@ -67,7 +67,7 @@ class UmlGrapherGraderTest {
         String result = createIssueContent(context);
 
         assertThat(result)
-            .containsIgnoringWhitespaces(expectedPayload);
+            .isEqualToIgnoringWhitespace(expectedPayload);
     }
 
     private GradingContext execute(String branchName, Grader grader, GradingConfiguration configuration) {

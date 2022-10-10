@@ -1,5 +1,8 @@
 package com.github.lernejo.korekto.grader.uml_grapher;
 
+import com.github.lernejo.korekto.grader.uml_grapher.parts.ClassDiagramRenderingVerification;
+import com.github.lernejo.korekto.grader.uml_grapher.parts.ClassDiagramVerifier;
+import com.github.lernejo.korekto.grader.uml_grapher.parts.TypesSupplier;
 import com.github.lernejo.korekto.toolkit.GradePart;
 import com.github.lernejo.korekto.toolkit.Grader;
 import com.github.lernejo.korekto.toolkit.GradingConfiguration;
@@ -49,7 +52,11 @@ public class UmlGrapherGrader implements Grader<LaunchingContext> {
                 "Part 1 - Compilation & Tests",
                 2.0D),
             new GitHubActionsPartGrader<>("Part 2 - CI", 2.0D),
-            new JacocoCoveragePartGrader<>("Part 3 - Code Coverage", 4.0D, 0.9D)
+            new JacocoCoveragePartGrader<>("Part 3 - Code Coverage", 4.0D, 0.85D),
+            new ClassDiagramRenderingVerification("Part 4 - Graph of a simple Interface", 1.0D, 0.3D,
+                TypesSupplier.simpleInterface(), ClassDiagramVerifier.classNameAndAnnotation()),
+            new ClassDiagramRenderingVerification("Part 5 - Graph of a simple Class", 1.0D, 0.3D,
+                TypesSupplier.simpleClass(), ClassDiagramVerifier.classNameAndAnnotation())
         );
     }
 

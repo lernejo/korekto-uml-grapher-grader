@@ -5,11 +5,14 @@ import com.github.lernejo.korekto.grader.uml_grapher.parts.MavenClassloader;
 import com.github.lernejo.korekto.toolkit.GradingConfiguration;
 import com.github.lernejo.korekto.toolkit.GradingContext;
 import com.github.lernejo.korekto.toolkit.misc.RandomSupplier;
+import com.github.lernejo.korekto.toolkit.misc.ThrowingFunction;
 import com.github.lernejo.korekto.toolkit.partgrader.MavenContext;
 import org.apache.maven.cli.MavenExposer;
 
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -54,8 +57,12 @@ public class LaunchingContext extends GradingContext implements MavenContext {
         return mavenMainClassloader;
     }
 
-    public ClassLoader newTmpMavenChildClassLoader() {
-        return new URLClassLoader(new URL[0], getMavenMainClassloader());
+    public ClassLoader newTmpMavenChildClassLoader(Path... additionalPaths) {
+        URL[] urls = Arrays.stream(additionalPaths)
+            .map(Path::toUri)
+            .map(ThrowingFunction.sneaky(uri -> uri.toURL()))
+            .toArray(URL[]::new);
+        return new URLClassLoader(urls, getMavenMainClassloader());
     }
 
     public List<URL> getMavenClassPath() {

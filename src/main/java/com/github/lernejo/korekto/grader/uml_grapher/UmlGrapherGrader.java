@@ -1,5 +1,6 @@
 package com.github.lernejo.korekto.grader.uml_grapher;
 
+import com.github.lernejo.korekto.grader.uml_grapher.parts.ClassDiagramRenderingByCliVerification;
 import com.github.lernejo.korekto.grader.uml_grapher.parts.ClassDiagramRenderingVerification;
 import com.github.lernejo.korekto.grader.uml_grapher.parts.ClassDiagramVerifier;
 import com.github.lernejo.korekto.grader.uml_grapher.parts.TypesSupplier;
@@ -53,10 +54,12 @@ public class UmlGrapherGrader implements Grader<LaunchingContext> {
                 2.0D),
             new GitHubActionsPartGrader<>("Part 2 - CI", 2.0D),
             new JacocoCoveragePartGrader<>("Part 3 - Code Coverage", 4.0D, 0.85D),
-            new ClassDiagramRenderingVerification("Part 4 - Graph of a simple Interface", 1.0D, 0.3D,
+            new ClassDiagramRenderingVerification("Part 4 - Graph of a simple Interface", 1.0D, 1.0D,
                 TypesSupplier.simpleInterface(), ClassDiagramVerifier.classNameAndAnnotation()),
-            new ClassDiagramRenderingVerification("Part 5 - Graph of a simple Class", 1.0D, 0.3D,
-                TypesSupplier.simpleClass(), ClassDiagramVerifier.classNameAndAnnotation())
+            new ClassDiagramRenderingVerification("Part 5 - Graph of a simple Class", 1.0D, 1.0D,
+                TypesSupplier.simpleClass(), ClassDiagramVerifier.classNameAndAnnotation()),
+            new ClassDiagramRenderingByCliVerification("Part 6 - CLI invocation", 2.0D, 1.0D,
+                TypesSupplier.randomJavaxType(), ClassDiagramVerifier.classNameAndAnnotation())
         );
     }
 

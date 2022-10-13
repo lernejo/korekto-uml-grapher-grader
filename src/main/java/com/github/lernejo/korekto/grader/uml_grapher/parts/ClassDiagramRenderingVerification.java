@@ -9,17 +9,23 @@ import com.github.lernejo.korekto.grader.uml_grapher.mermaid.ModelTranslator;
 import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.ClassDiagram;
 import com.github.lernejo.korekto.toolkit.GradePart;
 import com.github.lernejo.korekto.toolkit.PartGrader;
-import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.List;
+
+import static java.lang.Math.max;
 
 public record ClassDiagramRenderingVerification(String name, Double maxGrade, double errorRatioPenalty,
                                                 TypesSupplier typesSupplier,
                                                 ClassDiagramVerifier classDiagramVerifier) implements PartGrader<LaunchingContext> {
 
-    @NotNull
+    private static final String GRAPH_CLASS_NAME = "fr.lernejo.umlgrapher.UmlGraph";
+    private static final String GRAPH_TYPE_CLASS_NAME = "fr.lernejo.umlgrapher.GraphType";
+
     @Override
-    public GradePart grade(@NotNull LaunchingContext context) {
+    public GradePart grade(LaunchingContext context) {
         if (context.hasCompilationFailed()) {
             return result(List.of("Not available when there is compilation failures"), 0.0D);
         }
@@ -27,17 +33,29 @@ public record ClassDiagramRenderingVerification(String name, Double maxGrade, do
         ClassLoader tmpClassLoader = context.newTmpMavenChildClassLoader();
         try {
             Class<?>[] types = typesSupplier.supply(context, tmpClassLoader);
-            String graph = new GraphApiInvoker().invoke(tmpClassLoader, types);
+            String graph = invoke(tmpClassLoader, types);
             AstParser parser = new AstParser(new Lexer(new CharStream(graph)));
             ClassDiagram diagram = new ModelTranslator().translate(parser.parseClassDiagram().get());
             List<String> errors = classDiagramVerifier.verify(types, diagram);
-            return result(errors, (1.0 - errors.size() * errorRatioPenalty) * maxGrade);
-        } catch (GraphApiInvoker.InvocationError e) {
+            return result(errors, (1.0 - max(0, errors.size() * errorRatioPenalty)) * maxGrade);
+        } catch (InvocationError e) {
             return result(List.of(e.getMessage()), 0.0);
         } catch (MissingTokenException e) {
             return result(List.of("Graph syntax error: " + e.getMessage()), 0.0);
         } catch (RuntimeException e) {
-            throw new GraphApiInvoker.InvocationError("Unhandled error, report to maintainer: " + e.getMessage());
+            return result(List.of("Unhandled error, report to maintainer: " + e.getMessage()), 0.0);
         }
+    }
+
+    public String invoke(ClassLoader classLoader, Class<?>... typesToGraph) throws InvocationError {
+        Class<?> umlGraphClass = ReflectUtils.loadClass(classLoader, GRAPH_CLASS_NAME);
+        var umlGraphTypeClass = ReflectUtils.loadEnum(classLoader, GRAPH_TYPE_CLASS_NAME);
+        Constructor<?> constructor = ReflectUtils.getConstructor(umlGraphClass, Class[].class);
+        Method renderMethod = ReflectUtils.getMethod(umlGraphClass, "as", String.class, umlGraphTypeClass);
+
+        Object umlGraphObject = ReflectUtils.instantiate(constructor, (Object) typesToGraph);
+        Enum<?> mermaidValue = ReflectUtils.getEnumValue(umlGraphTypeClass, "Mermaid");
+
+        return ReflectUtils.invokeMethod(renderMethod, umlGraphObject, mermaidValue);
     }
 }

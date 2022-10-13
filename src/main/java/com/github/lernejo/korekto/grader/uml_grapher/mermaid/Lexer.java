@@ -11,6 +11,7 @@ public class Lexer {
     public static final Predicate<Character> IS_EOL = c -> c == '\n';
     public static final Predicate<Character> IS_SPACE = c -> " \t".indexOf(c) >= 0;
     public static final Predicate<Character> IS_GREATER = c -> c == '>';
+    public static final Predicate<Character> IS_COMMA = c -> c == ',';
     public static final Predicate<Character> IS_STAR = c -> c == '*';
     public static final Predicate<Character> IS_DOLLAR = c -> c == '$';
     public static final Predicate<Character> IS_OPEN_PARENTHESIS = c -> c == '(';
@@ -139,7 +140,16 @@ public class Lexer {
             String literal = charStream.nextMatchingString(FixedTokenDefinition.DIRECTION.getLiteralString());
             nextToken = new Token(TokenType.DIRECTION, literal, position);
         } else {
-            String literal = charStream.nextUntil(IS_EOL.or(IS_SPACE).or(IS_GREATER).or(IS_STAR).or(IS_DOLLAR).or(IS_OPEN_PARENTHESIS).or(IS_CLOSE_PARENTHESIS));
+            String literal = charStream.nextUntil(
+                IS_EOL
+                    .or(IS_SPACE)
+                    .or(IS_COMMA)
+                    .or(IS_GREATER)
+                    .or(IS_STAR)
+                    .or(IS_DOLLAR)
+                    .or(IS_OPEN_PARENTHESIS)
+                    .or(IS_CLOSE_PARENTHESIS)
+            );
             nextToken = new Token(TokenType.TEXT, literal, position);
         }
 

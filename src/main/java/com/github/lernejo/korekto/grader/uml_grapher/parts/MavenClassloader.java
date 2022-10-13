@@ -19,7 +19,7 @@ import static com.github.lernejo.korekto.toolkit.misc.ThrowingFunction.sneaky;
 @SubjectForToolkitInclusion
 public class MavenClassloader {
 
-    public static ClassLoader build(MavenExposer exposer, Exercise exercise) {
+    public static List<URL> getMavenClassPath(MavenExposer exposer, Exercise exercise) {
         Path mavenLocalRepoDirectory = exercise.getRoot().getParent().getParent().resolve(".m2");
         Path pomPath = exercise.getRoot().resolve("pom.xml");
         List<Dependency> dependencies = exposer.resolveEffectiveRuntimeDependencies(pomPath);
@@ -28,13 +28,16 @@ public class MavenClassloader {
             .filter(d -> !"test".equals(d.getScope()))
             .map(d -> toPath(d))
             .map(mavenLocalRepoDirectory::resolve);
-        List<URL> classPath = Stream.concat(
+        return Stream.concat(
                 runtimeDependencies,
                 Stream.of(exercise.getRoot().resolve("target").resolve("classes"))
             )
             .map(p -> p.toUri())
             .map(sneaky(uri -> uri.toURL()))
             .toList();
+    }
+
+    public static ClassLoader buildIsolatedClassLoader(List<URL> classPath) {
         return new URLClassLoader(
             classPath.toArray(new URL[0]),
             MavenClassloader.class.getClassLoader().getParent()

@@ -12,7 +12,6 @@ import com.github.lernejo.korekto.toolkit.PartGrader;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.List;
 
 import static java.lang.Math.max;
@@ -32,7 +31,7 @@ public record ClassDiagramRenderingVerification(String name, Double maxGrade, do
 
         ClassLoader tmpClassLoader = context.newTmpMavenChildClassLoader();
         try {
-            Class<?>[] types = typesSupplier.supply(context, tmpClassLoader);
+            TypesSupplier.Types types = typesSupplier.supply(context, tmpClassLoader);
             String graph = invoke(tmpClassLoader, types);
             AstParser parser = new AstParser(new Lexer(new CharStream(graph)));
             ClassDiagram diagram = new ModelTranslator().translate(parser.parseClassDiagram().get());
@@ -47,13 +46,13 @@ public record ClassDiagramRenderingVerification(String name, Double maxGrade, do
         }
     }
 
-    public String invoke(ClassLoader classLoader, Class<?>... typesToGraph) throws InvocationError {
+    public String invoke(ClassLoader classLoader, TypesSupplier.Types typesToGraph) throws InvocationError {
         Class<?> umlGraphClass = ReflectUtils.loadClass(classLoader, GRAPH_CLASS_NAME);
         var umlGraphTypeClass = ReflectUtils.loadEnum(classLoader, GRAPH_TYPE_CLASS_NAME);
         Constructor<?> constructor = ReflectUtils.getConstructor(umlGraphClass, Class[].class);
         Method renderMethod = ReflectUtils.getMethod(umlGraphClass, "as", String.class, umlGraphTypeClass);
 
-        Object umlGraphObject = ReflectUtils.instantiate(constructor, (Object) typesToGraph);
+        Object umlGraphObject = ReflectUtils.instantiate(constructor, (Object) typesToGraph.selectedTypes());
         Enum<?> mermaidValue = ReflectUtils.getEnumValue(umlGraphTypeClass, "Mermaid");
 
         return ReflectUtils.invokeMethod(renderMethod, umlGraphObject, mermaidValue);

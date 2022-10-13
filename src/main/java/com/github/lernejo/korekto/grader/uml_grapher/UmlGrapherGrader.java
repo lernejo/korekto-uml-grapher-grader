@@ -2,8 +2,6 @@ package com.github.lernejo.korekto.grader.uml_grapher;
 
 import com.github.lernejo.korekto.grader.uml_grapher.parts.ClassDiagramRenderingByCliVerification;
 import com.github.lernejo.korekto.grader.uml_grapher.parts.ClassDiagramRenderingVerification;
-import com.github.lernejo.korekto.grader.uml_grapher.parts.ClassDiagramVerifier;
-import com.github.lernejo.korekto.grader.uml_grapher.parts.TypesSupplier;
 import com.github.lernejo.korekto.toolkit.GradePart;
 import com.github.lernejo.korekto.toolkit.Grader;
 import com.github.lernejo.korekto.toolkit.GradingConfiguration;
@@ -17,6 +15,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
+
+import static com.github.lernejo.korekto.grader.uml_grapher.parts.ClassDiagramVerifier.classNameAndAnnotation;
+import static com.github.lernejo.korekto.grader.uml_grapher.parts.ClassDiagramVerifier.relations;
+import static com.github.lernejo.korekto.grader.uml_grapher.parts.TypesSupplier.*;
 
 public class UmlGrapherGrader implements Grader<LaunchingContext> {
 
@@ -55,11 +57,13 @@ public class UmlGrapherGrader implements Grader<LaunchingContext> {
             new GitHubActionsPartGrader<>("Part 2 - CI", 2.0D),
             new JacocoCoveragePartGrader<>("Part 3 - Code Coverage", 4.0D, 0.85D),
             new ClassDiagramRenderingVerification("Part 4 - Graph of a simple Interface", 1.0D, 1.0D,
-                TypesSupplier.simpleInterface(), ClassDiagramVerifier.classNameAndAnnotation()),
+                simpleInterface(), classNameAndAnnotation()),
             new ClassDiagramRenderingVerification("Part 5 - Graph of a simple Class", 1.0D, 1.0D,
-                TypesSupplier.simpleClass(), ClassDiagramVerifier.classNameAndAnnotation()),
+                simpleClass(), classNameAndAnnotation()),
             new ClassDiagramRenderingByCliVerification("Part 6 - CLI invocation", 2.0D, 1.0D,
-                TypesSupplier.randomJavaxType(), ClassDiagramVerifier.classNameAndAnnotation())
+                randomJavaxType(), classNameAndAnnotation()),
+            new ClassDiagramRenderingVerification("Part 7 - Walk into the parent hierarchy", 3.0D, 2.0D,
+                bottomUpHierarchy(), classNameAndAnnotation().and(relations()))
         );
     }
 

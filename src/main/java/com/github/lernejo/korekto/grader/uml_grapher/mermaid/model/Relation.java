@@ -19,4 +19,9 @@ public record Relation(String c1, Relationship relationship, String c2) {
             return originalEquality;
         }
     }
+
+    public boolean involves(String oc1, String oc2) {
+        return Objects.equals(c1, oc1) && Objects.equals(c2, oc2)
+            || Objects.equals(c1, oc2) && Objects.equals(c2, oc1);
+    }
 }

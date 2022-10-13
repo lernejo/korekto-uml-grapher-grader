@@ -40,9 +40,9 @@ public record ClassDiagramRenderingByCliVerification(String name, Double maxGrad
             List<URL> classPath = context.getMavenClassPath();
             String cp = buildClassPath(classPath);
 
-            Class<?>[] types = typesSupplier.supply(context, context.newTmpMavenChildClassLoader());
+            TypesSupplier.Types types = typesSupplier.supply(context, context.newTmpMavenChildClassLoader());
 
-            String programArguments = Arrays.stream(types)
+            String programArguments = Arrays.stream(types.selectedTypes())
                 .flatMap(t -> Stream.of("-c", t.getName()))
                 .collect(Collectors.joining(" "));
 

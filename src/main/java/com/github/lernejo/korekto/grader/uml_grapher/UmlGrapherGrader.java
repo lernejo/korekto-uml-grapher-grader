@@ -58,12 +58,14 @@ public class UmlGrapherGrader implements Grader<LaunchingContext> {
             new JacocoCoveragePartGrader<>("Part 3 - Code Coverage", 4.0D, 0.85D),
             new ClassDiagramRenderingVerification("Part 4 - Graph of a simple Interface", 1.0D, 1.0D,
                 simpleInterface(), classNameAndAnnotation()),
-            new ClassDiagramRenderingVerification("Part 5 - Graph of a simple Class", 1.0D, 1.0D,
-                simpleClass(), classNameAndAnnotation()),
+            new ClassDiagramRenderingVerification("Part 5 - Graph of simple Classes", 1.0D, 1.0D,
+                simpleClasses(2), classNameAndAnnotation()),
             new ClassDiagramRenderingByCliVerification("Part 6 - CLI invocation", 2.0D, 1.0D,
-                randomJavaxType(), classNameAndAnnotation()),
-            new ClassDiagramRenderingVerification("Part 7 - Walk into the parent hierarchy", 3.0D, 2.0D,
-                bottomUpHierarchy(), classNameAndAnnotation().and(relations()))
+                simpleClasses(4), classNameAndAnnotation()),
+            new ClassDiagramRenderingVerification("Part 7 - Walk into the parent hierarchy", 2.0D, 1.0D,
+                bottomUpHierarchy(), classNameAndAnnotation().and(relations())),
+            new ClassDiagramRenderingVerification("Part 8 - Walk into the children hierarchy", 3.0D, 1.5D,
+                topToBottomHierarchy(), classNameAndAnnotation().and(relations()))
         );
     }
 

@@ -11,6 +11,7 @@ import com.github.lernejo.korekto.toolkit.GradePart;
 import com.github.lernejo.korekto.toolkit.PartGrader;
 import com.github.lernejo.korekto.toolkit.misc.OS;
 import com.github.lernejo.korekto.toolkit.misc.Processes;
+import net.bytebuddy.dynamic.loading.ByteArrayClassLoader;
 
 import java.io.File;
 import java.net.URL;
@@ -18,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,10 +39,11 @@ public record ClassDiagramRenderingByCliVerification(String name, Double maxGrad
         }
 
         try {
+            ClassLoader mavenClassLoader = context.getMavenMainClassloader();
+            ByteArrayClassLoader byteArrayClassLoader = new ByteArrayClassLoader(mavenClassLoader, false, Map.of(), ByteArrayClassLoader.PersistenceHandler.MANIFEST);
+            TypesSupplier.Types types = typesSupplier.supply(context, byteArrayClassLoader);
             List<URL> classPath = context.getMavenClassPath();
-            String cp = buildClassPath(classPath);
-
-            TypesSupplier.Types types = typesSupplier.supply(context, context.newTmpMavenChildClassLoader());
+            String cp = buildClassPath(classPath, types.directory());
 
             String programArguments = Arrays.stream(types.selectedTypes())
                 .flatMap(t -> Stream.of("-c", t.getName()))
@@ -72,8 +75,11 @@ public record ClassDiagramRenderingByCliVerification(String name, Double maxGrad
         }
     }
 
-    private String buildClassPath(List<URL> classPath) {
-        return classPath.stream().map(URL::getPath).map(this::removeWinPrefix).collect(Collectors.joining(File.pathSeparator));
+    private String buildClassPath(List<URL> classPath, Path... additionalPaths) {
+        return Stream.concat(
+            classPath.stream().map(URL::getPath).map(this::removeWinPrefix),
+            Stream.of(additionalPaths).map(String::valueOf)
+        ).collect(Collectors.joining(File.pathSeparator));
     }
 
     private String removeWinPrefix(String s) {

@@ -1,0 +1,61 @@
+classDiagram
+class FileObject {
+    <<interface>>
+    +delete() boolean
+    +getCharContent(boolean arg0) CharSequence
+    +getLastModified() long
+    +getName() String
+    +openInputStream() InputStream
+    +openOutputStream() OutputStream
+    +openReader(boolean arg0) Reader
+    +openWriter() Writer
+    +toUri() URI
+}
+class JavaFileObject {
+    <<interface>>
+    +getAccessLevel() Modifier
+    +getKind() Kind
+    +getNestingKind() NestingKind
+    +isNameCompatible(String arg0, Kind arg1) boolean
+}
+class Kind {
+    <<enumeration>>
+    +Kind CLASS$
+    +Kind HTML$
+    +Kind OTHER$
+    +Kind SOURCE$
+    +String extension
+}
+class Modifier {
+    <<enumeration>>
+    +Modifier ABSTRACT$
+    +Modifier DEFAULT$
+    +Modifier FINAL$
+    +Modifier NATIVE$
+    +Modifier NON_SEALED$
+    +Modifier PRIVATE$
+    +Modifier PROTECTED$
+    +Modifier PUBLIC$
+    +Modifier SEALED$
+    +Modifier STATIC$
+    +Modifier STRICTFP$
+    +Modifier SYNCHRONIZED$
+    +Modifier TRANSIENT$
+    +Modifier VOLATILE$
+    +toString() String
+}
+class NestingKind {
+    <<enumeration>>
+    +NestingKind ANONYMOUS$
+    +NestingKind LOCAL$
+    +NestingKind MEMBER$
+    +NestingKind TOP_LEVEL$
+    +isNested() boolean
+}
+FileObject <|-- JavaFileObject : extends
+Kind <-- JavaFileObject : returns
+Modifier <-- JavaFileObject : returns
+NestingKind <-- JavaFileObject : returns
+Kind <-- Kind : uses
+Modifier <-- Modifier : uses
+NestingKind <-- NestingKind : uses

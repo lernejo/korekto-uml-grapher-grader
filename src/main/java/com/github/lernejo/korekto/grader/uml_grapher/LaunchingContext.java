@@ -4,13 +4,13 @@ import com.github.lernejo.korekto.grader.uml_grapher.parts.IdentifierGenerator;
 import com.github.lernejo.korekto.grader.uml_grapher.parts.MavenClassloader;
 import com.github.lernejo.korekto.toolkit.GradingConfiguration;
 import com.github.lernejo.korekto.toolkit.GradingContext;
-import com.github.lernejo.korekto.toolkit.misc.ClassLoaders;
 import com.github.lernejo.korekto.toolkit.misc.RandomSupplier;
 import com.github.lernejo.korekto.toolkit.partgrader.MavenContext;
 import org.apache.maven.cli.MavenExposer;
 
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.List;
 import java.util.Random;
 
 public class LaunchingContext extends GradingContext implements MavenContext {
@@ -19,12 +19,11 @@ public class LaunchingContext extends GradingContext implements MavenContext {
     public static RandomSupplier RANDOM = r::nextInt;
 
     private final IdentifierGenerator identifierGenerator = new IdentifierGenerator(RANDOM);
+    private final MavenExposer mavenExposer = new MavenExposer();
     private boolean compilationFailed;
     private boolean testFailed;
-
+    private List<URL> mavenClassPath;
     private ClassLoader mavenMainClassloader;
-
-    private final MavenExposer mavenExposer = new MavenExposer();
 
     public LaunchingContext(GradingConfiguration configuration) {
         super(configuration);
@@ -51,14 +50,17 @@ public class LaunchingContext extends GradingContext implements MavenContext {
     }
 
     public ClassLoader getMavenMainClassloader() {
-        if (mavenMainClassloader == null) {
-            mavenMainClassloader = MavenClassloader.build(mavenExposer, getExercise());
-        }
+        initClassPathAndClassLoader();
         return mavenMainClassloader;
     }
 
     public ClassLoader newTmpMavenChildClassLoader() {
         return new URLClassLoader(new URL[0], getMavenMainClassloader());
+    }
+
+    public List<URL> getMavenClassPath() {
+        initClassPathAndClassLoader();
+        return List.copyOf(mavenClassPath);
     }
 
     public String newTypeId() {
@@ -67,5 +69,12 @@ public class LaunchingContext extends GradingContext implements MavenContext {
 
     public String newId() {
         return identifierGenerator.generateId(false);
+    }
+
+    private void initClassPathAndClassLoader() {
+        if (mavenClassPath == null) {
+            mavenClassPath = MavenClassloader.getMavenClassPath(mavenExposer, getExercise());
+            mavenMainClassloader = MavenClassloader.buildIsolatedClassLoader(mavenClassPath);
+        }
     }
 }

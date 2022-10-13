@@ -4,7 +4,12 @@ import com.github.lernejo.korekto.grader.uml_grapher.LaunchingContext;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.implementation.FixedValue;
 
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.Tool;
 import java.lang.reflect.Modifier;
+import java.net.URL;
+import java.util.List;
 
 @FunctionalInterface
 public interface TypesSupplier {
@@ -35,6 +40,13 @@ public interface TypesSupplier {
                 .make()
                 .load(cl)
                 .getLoaded()
+        };
+    }
+
+    static TypesSupplier randomJavaxType() {
+        var javaxTypes = List.of(JavaCompiler.class, JavaFileObject.class, Tool.class);
+        return (c, cl) -> new Class<?>[]{
+            javaxTypes.get(LaunchingContext.RANDOM.nextInt(javaxTypes.size()))
         };
     }
 

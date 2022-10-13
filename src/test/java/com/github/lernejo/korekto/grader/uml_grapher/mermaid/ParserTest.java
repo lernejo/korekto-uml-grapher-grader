@@ -4,6 +4,8 @@ import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.ClassDef;
 import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.ClassDiagram;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,6 +58,19 @@ class ParserTest {
             }
             Singleton <-- Singleton : returns
             """;
+        AstParser parser = new AstParser(new Lexer(new CharStream(content)));
+
+        ClassDiagram diagram = new ModelTranslator().translate(parser.parseClassDiagram().get());
+
+        assertThat(diagram).isNotNull();
+    }
+
+    @Test
+    void complex_diag() {
+        String content = new Scanner(ParserTest.class.getClassLoader().getResourceAsStream("graphs/javax.graph"), StandardCharsets.UTF_8)
+            .useDelimiter("\\A")
+            .next();
+
         AstParser parser = new AstParser(new Lexer(new CharStream(content)));
 
         ClassDiagram diagram = new ModelTranslator().translate(parser.parseClassDiagram().get());

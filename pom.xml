@@ -17,7 +17,7 @@
         <logback-classic.version>1.4.4</logback-classic.version>
         <maven.version>3.8.6</maven.version>
         <!-- As Maven 3.8.6 depend on resolver 1.6.3... and newer versions break binary compatibility -->
-        <maven-resolver.version>1.6.3</maven-resolver.version>
+        <maven-resolver.version>1.8.2</maven-resolver.version>
         <byte-buddy.version>1.12.17</byte-buddy.version>
 
         <record-builder.version>34</record-builder.version>

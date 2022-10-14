@@ -17,9 +17,8 @@ import java.util.List;
 import java.util.Random;
 
 public class LaunchingContext extends GradingContext implements MavenContext {
-    private static final Random r = new Random();
     // Mutable for tests
-    public static RandomSupplier RANDOM = r::nextInt;
+    static RandomSupplier RANDOM = RandomSupplier.createRandom();
 
     private final IdentifierGenerator identifierGenerator = new IdentifierGenerator(RANDOM);
     private final MavenExposer mavenExposer = new MavenExposer();
@@ -83,5 +82,9 @@ public class LaunchingContext extends GradingContext implements MavenContext {
             mavenClassPath = MavenClassloader.getMavenClassPath(mavenExposer, getExercise());
             mavenMainClassloader = MavenClassloader.buildIsolatedClassLoader(mavenClassPath);
         }
+    }
+
+    public RandomSupplier randomSupplier() {
+        return RANDOM;
     }
 }

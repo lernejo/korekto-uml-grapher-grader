@@ -28,7 +28,9 @@ public class ByteBuddys {
 
     public static Path createTempClassDirectory(RandomSupplier rs) {
         try {
-            return Files.createDirectories(Paths.get("target").resolve("generated-classes-" + System.currentTimeMillis() + "-" + rs.nextInt(100)));
+            return Files.createDirectories(Paths.get("target")
+                .resolve("generated-classes")
+                .resolve("gen-" + System.currentTimeMillis() + "-" + rs.nextInt(100)));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

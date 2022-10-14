@@ -1,7 +1,14 @@
 # Exercice commencé
-Votre note est de **17**/17.
+Votre note est de **18.5**/20.
 
 ## Détail
+* Git (proper descriptive messages): -0.5
+    * `7c2a2da` All-in-1 --> 1 word is too short
+
+* Coding style: -1
+    * fr.lernejo.umlgrapher.GraphType
+      * L.6: The field `formatter` must have modifier `private`
+
 * Part 1 - Compilation & Tests: 2/2
 * Part 2 - CI: 2/2
 * Part 3 - Code Coverage: 4/4
@@ -10,5 +17,7 @@ Votre note est de **17**/17.
 * Part 6 - CLI invocation: 2/2
 * Part 7 - Walk into the parent hierarchy: 2/2
 * Part 8 - Walk into the children hierarchy: 3/3
+* Part 9 - Display & walk members: singleton: 1.5/1.5
+* Part 10 - Display & walk members: proxy: 1.5/1.5
 
 *Analyse effectuée à 1970-01-01T00:00:00Z.*

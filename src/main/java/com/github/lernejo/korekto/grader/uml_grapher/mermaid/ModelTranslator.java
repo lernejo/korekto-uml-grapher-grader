@@ -10,10 +10,10 @@ import com.github.lernejo.korekto.grader.uml_grapher.mermaid.ast.Item;
 import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.ClassDefBuilder;
 import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.ClassDiagram;
 import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.ClassDiagramBuilder;
+import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.ClassMethod;
 import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.Classifier;
-import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.Field;
-import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.Method;
-import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.Parameter;
+import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.ClassField;
+import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.MethodParameter;
 import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.Relation;
 import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.Relationship;
 import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.Visibility;
@@ -59,32 +59,32 @@ public class ModelTranslator {
         return builder.build();
     }
 
-    private Set<Method> extractMethods(List<ClassBlockItem> items) {
-        Set<Method> methods = new HashSet<>();
+    private Set<ClassMethod> extractMethods(List<ClassBlockItem> items) {
+        Set<ClassMethod> methods = new HashSet<>();
         for (ClassBlockItem item : items) {
             if (item instanceof ClassBlockMethod m) {
-                methods.add(new Method(translate(m.visibility()), m.type(), m.name(), translate(m.classifier()), translate(m.parameters())));
+                methods.add(new ClassMethod(translate(m.visibility()), m.type(), m.name(), translate(m.classifier()), translate(m.parameters())));
             }
         }
         return methods;
     }
 
-    private Set<Field> extractFields(List<ClassBlockItem> items) {
-        Set<Field> fields = new HashSet<>();
+    private Set<ClassField> extractFields(List<ClassBlockItem> items) {
+        Set<ClassField> fields = new HashSet<>();
         for (ClassBlockItem item : items) {
             if (item instanceof ClassBlockField f) {
-                fields.add(new Field(translate(f.visibility()), f.type(), f.name(), translate(f.classifier())));
+                fields.add(new ClassField(translate(f.visibility()), f.type(), f.name(), translate(f.classifier())));
             }
         }
         return fields;
     }
 
-    private List<Parameter> translate(List<com.github.lernejo.korekto.grader.uml_grapher.mermaid.ast.Parameter> parameters) {
+    private List<MethodParameter> translate(List<com.github.lernejo.korekto.grader.uml_grapher.mermaid.ast.Parameter> parameters) {
         return parameters.stream().map(this::translate).toList();
     }
 
-    private Parameter translate(com.github.lernejo.korekto.grader.uml_grapher.mermaid.ast.Parameter parameter) {
-        return new Parameter(parameter.type(), parameter.name());
+    private MethodParameter translate(com.github.lernejo.korekto.grader.uml_grapher.mermaid.ast.Parameter parameter) {
+        return new MethodParameter(parameter.type(), parameter.name());
     }
 
     private Relationship translate(DirectionalRelationship relationship) {

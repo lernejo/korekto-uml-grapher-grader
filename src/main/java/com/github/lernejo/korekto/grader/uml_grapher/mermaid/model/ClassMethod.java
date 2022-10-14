@@ -6,5 +6,5 @@ import java.util.List;
 
 @RecordBuilder.Options(useImmutableCollections = true)
 @RecordBuilder
-public record Method(Visibility visibility, String type, String name, Classifier classifier, List<Parameter> parameters) {
+public record ClassMethod(Visibility visibility, String type, String name, Classifier classifier, List<MethodParameter> parameters) {
 }

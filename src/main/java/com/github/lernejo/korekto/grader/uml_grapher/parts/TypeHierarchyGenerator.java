@@ -1,5 +1,6 @@
 package com.github.lernejo.korekto.grader.uml_grapher.parts;
 
+import com.github.lernejo.korekto.grader.uml_grapher.LaunchingContext;
 import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.Relation;
 import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.Relationship;
 import com.github.lernejo.korekto.toolkit.misc.RandomSupplier;
@@ -17,20 +18,20 @@ import static com.github.lernejo.korekto.grader.uml_grapher.parts.ByteBuddys.*;
 
 public class TypeHierarchyGenerator {
 
-    public static TypeHierarchy generate(ClassLoader cl, RandomSupplier rs, Supplier<String> typeNameSupplier) {
-        Path directory = ByteBuddys.createTempClassDirectory(rs);
+    public static TypeHierarchy generate(ClassLoader cl, LaunchingContext c) {
+        Path directory = ByteBuddys.createTempClassDirectory(c.randomSupplier());
         Class<?> parent = saveToFileAndLoad(
             BYTE_BUDDY
                 .makeInterface()
-                .name(GEN_PACKAGE + "GrandMother_" + typeNameSupplier.get())
+                .name(GEN_PACKAGE + "GrandMother_" + c.newTypeId())
                 .make(),
             directory,
             cl
         );
         List<Class<?>> subTypes = new ArrayList<>();
         Set<Relation> relations = new HashSet<>();
-        for (int i = 0; i < 2 + rs.nextInt(3); i++) {
-            String name = "Mother_" + typeNameSupplier.get();
+        for (int i = 0; i < 2 + c.randomSupplier().nextInt(3); i++) {
+            String name = "Mother_" + c.newTypeId();
             subTypes.add(
                 saveToFileAndLoad(
                     BYTE_BUDDY
@@ -46,10 +47,10 @@ public class TypeHierarchyGenerator {
         // we want the first subSubTypes to match at least one existing subTypes to avoid orphans when walking types from bottom to top
         PrimitiveIterator.OfInt seq = IntStream.concat(
             IntStream.range(0, subTypes.size()),
-            IntStream.generate(() -> rs.nextInt(subTypes.size()))
+            IntStream.generate(() -> c.randomSupplier().nextInt(subTypes.size()))
         ).iterator();
-        for (int i = 0; i < subTypes.size() + rs.nextInt(3); i++) {
-            String name = "Daughter_" + typeNameSupplier.get();
+        for (int i = 0; i < subTypes.size() + c.randomSupplier().nextInt(3); i++) {
+            String name = "Daughter_" + c.newTypeId();
             Class<?> localParent = subTypes.get(seq.nextInt());
             subSubTypes.add(
                 saveToFileAndLoad(
@@ -62,10 +63,11 @@ public class TypeHierarchyGenerator {
             );
             relations.add(new Relation(name, Relationship.INHERITS_FROM, localParent.getSimpleName()));
         }
-        for (int i = 0; i < 2 + rs.nextInt(3); i++) {
-            var startIndex = rs.nextInt(subTypes.size());
-            var interfacesToImplement = subTypes.subList(startIndex, Math.max(subTypes.size(), startIndex + rs.nextInt(subTypes.size())));
-            String name = "Son_" + typeNameSupplier.get();
+        for (int i = 0; i < 2 + c.randomSupplier().nextInt(3); i++) {
+            var startIndex = c.randomSupplier().nextInt(subTypes.size());
+            int endIndex = Math.max(subTypes.size(), startIndex + c.randomSupplier().nextInt(subTypes.size()));
+            var interfacesToImplement = subTypes.subList(startIndex, endIndex);
+            String name = "Son_" + c.newTypeId();
             subSubTypes.add(
                 saveToFileAndLoad(
                     BYTE_BUDDY

@@ -19,7 +19,7 @@ public interface TypesSupplier {
 
     static TypesSupplier simpleInterface() {
         return (c, cl) -> {
-            Path directory = ByteBuddys.createTempClassDirectory(LaunchingContext.RANDOM);
+            Path directory = ByteBuddys.createTempClassDirectory(c.randomSupplier());
             return new Types(
                 saveToFileAndLoad(
                     BYTE_BUDDY
@@ -38,7 +38,7 @@ public interface TypesSupplier {
 
     static TypesSupplier simpleClasses(int count) {
         return (c, cl) -> {
-            Path directory = ByteBuddys.createTempClassDirectory(LaunchingContext.RANDOM);
+            Path directory = ByteBuddys.createTempClassDirectory(c.randomSupplier());
             Class<?>[] types = IntStream.range(0, count)
                 .mapToObj(i -> saveToFileAndLoad(
                     BYTE_BUDDY
@@ -58,7 +58,7 @@ public interface TypesSupplier {
     static TypesSupplier bottomUpHierarchy() {
         return (c, cl) -> {
             var typeHierarchy = TypeHierarchyGenerator
-                .generate(cl, LaunchingContext.RANDOM, c::newTypeId);
+                .generate(cl, c);
 
             return new Types(typeHierarchy.allTypes(), typeHierarchy.subSubTypes(), typeHierarchy.relations(), typeHierarchy.directory());
         };
@@ -67,10 +67,18 @@ public interface TypesSupplier {
     static TypesSupplier topToBottomHierarchy() {
         return (c, cl) -> {
             var typeHierarchy = TypeHierarchyGenerator
-                .generate(cl, LaunchingContext.RANDOM, c::newTypeId);
+                .generate(cl, c);
 
             return new Types(typeHierarchy.allTypes(), List.of(typeHierarchy.parent()), typeHierarchy.relations(), typeHierarchy.directory());
         };
+    }
+
+    static TypesSupplier singleton() {
+        return (c, cl) -> DesignPatternGenerator.generateSingleton(cl, c);
+    }
+
+    static TypesSupplier proxy() {
+        return (c, cl) -> DesignPatternGenerator.generateProxy(cl, c);
     }
 
     Types supply(LaunchingContext context, ClassLoader tmpClassLoader);

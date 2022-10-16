@@ -71,7 +71,11 @@ public record ClassDiagramRenderingByCliVerification(String name, Double maxGrad
             return result(List.of(e.getMessage()), 0.0);
         } catch (RuntimeException e) {
             e.printStackTrace();
-            return result(List.of("Unhandled error, report to maintainer: " + e.getClass().getName() + " " + e.getMessage()), 0.0);
+            String indentedStackTrace = Arrays.stream(e.getStackTrace())
+                .limit(6)
+                .map(String::valueOf)
+                .collect(Collectors.joining("\n        ", "\n        ", ""));
+            return result(List.of("Unhandled error, report to maintainer. " + e.getClass().getSimpleName() + ": " + e.getMessage() + indentedStackTrace), 0.0);
         }
     }
 

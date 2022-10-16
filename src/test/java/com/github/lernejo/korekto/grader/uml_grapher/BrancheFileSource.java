@@ -1,5 +1,6 @@
 package com.github.lernejo.korekto.grader.uml_grapher;
 
+import com.github.lernejo.korekto.toolkit.misc.SubjectForToolkitInclusion;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
@@ -16,6 +17,7 @@ import java.util.stream.Stream;
 
 import static com.github.lernejo.korekto.toolkit.misc.ThrowingFunction.sneaky;
 
+@SubjectForToolkitInclusion
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

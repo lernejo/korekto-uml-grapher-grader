@@ -9,7 +9,6 @@ import com.github.lernejo.korekto.grader.uml_grapher.mermaid.ModelTranslator;
 import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.ClassDiagram;
 import com.github.lernejo.korekto.toolkit.GradePart;
 import com.github.lernejo.korekto.toolkit.PartGrader;
-import com.github.lernejo.korekto.toolkit.misc.ThrowingFunction;
 import net.bytebuddy.dynamic.loading.ByteArrayClassLoader;
 
 import java.lang.reflect.Constructor;
@@ -17,6 +16,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.github.lernejo.korekto.toolkit.misc.ThrowingFunction.sneaky;
 import static java.lang.Math.max;
@@ -52,7 +52,12 @@ public record ClassDiagramRenderingVerification(String name, Double maxGrade, do
         } catch (MissingTokenException e) {
             return result(List.of("Graph syntax error: " + e.getMessage()), 0.0);
         } catch (RuntimeException e) {
-            return result(List.of("Unhandled error, report to maintainer: " + e.getMessage()), 0.0);
+            e.printStackTrace();
+            String indentedStackTrace = Arrays.stream(e.getStackTrace())
+                .limit(6)
+                .map(String::valueOf)
+                .collect(Collectors.joining("\n        ", "\n        ", ""));
+            return result(List.of("Unhandled error, report to maintainer. " + e.getClass().getSimpleName() + ": " + e.getMessage() + indentedStackTrace), 0.0);
         }
     }
 

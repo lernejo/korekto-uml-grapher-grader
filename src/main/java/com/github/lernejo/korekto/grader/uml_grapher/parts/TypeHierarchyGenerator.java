@@ -65,7 +65,7 @@ public class TypeHierarchyGenerator {
         }
         for (int i = 0; i < 2 + c.randomSupplier().nextInt(3); i++) {
             var startIndex = c.randomSupplier().nextInt(subTypes.size());
-            int endIndex = Math.max(subTypes.size(), startIndex + c.randomSupplier().nextInt(subTypes.size()));
+            int endIndex = subTypes.size();
             var interfacesToImplement = subTypes.subList(startIndex, endIndex);
             String name = "Son_" + c.newTypeId();
             subSubTypes.add(

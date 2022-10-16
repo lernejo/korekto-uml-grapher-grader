@@ -63,7 +63,7 @@ public interface ClassDiagramVerifier {
                     }
                     ClassDef classDef = diagram.getClass(type.getSimpleName());
                     ClassField expectedField = createField(field);
-                    if (!classDef.fields().contains(expectedField)) {
+                    if (classDef == null || !classDef.fields().contains(expectedField)) {
                         errors.add("On class " + type.getSimpleName() + ", missing field: " + expectedField);
                     }
                 }
@@ -73,7 +73,7 @@ public interface ClassDiagramVerifier {
                     }
                     ClassDef classDef = diagram.getClass(type.getSimpleName());
                     ClassMethod expectedMethod = createMethod(method);
-                    if (!classDef.hasMethod(expectedMethod)) {
+                    if (classDef == null || !classDef.hasMethod(expectedMethod)) {
                         errors.add("On class " + type.getSimpleName() + ", missing method: " + expectedMethod);
                     }
                 }

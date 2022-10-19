@@ -44,7 +44,7 @@ public record AstParser(Lexer lexer) {
             } else if (lexer.peek().isOfType(TokenType.OPEN_CURLY_BRACKET)) {
                 return parseClassBlock(name);
             } else {
-                throw new MissingTokenException(lexer.peek());
+                throw new MissingTokenException(lexer.peek(), FixedTokenDefinition.EOL, FixedTokenDefinition.OPEN_CURLY_BRACKET);
             }
         } else if (lexer.peekNextNonBlankToken().isOfAnyType(TokenType.ARROW_TYPES)) {
             lexer.skipBlanks();

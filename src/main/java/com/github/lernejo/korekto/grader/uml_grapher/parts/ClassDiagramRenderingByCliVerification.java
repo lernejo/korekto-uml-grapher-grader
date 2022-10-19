@@ -63,9 +63,12 @@ public record ClassDiagramRenderingByCliVerification(String name, Double maxGrad
                 AstParser parser = new AstParser(new Lexer(new CharStream(graph)));
                 ClassDiagram diagram = new ModelTranslator().translate(parser.parseClassDiagram().get());
                 List<String> errors = classDiagramVerifier.verify(types, diagram);
+                if (!errors.isEmpty()) {
+                    errors.add(graphContent(graph));
+                }
                 return result(errors, (1.0 - max(0, errors.size() * errorRatioPenalty)) * maxGrade);
             } catch (MissingTokenException e) {
-                return result(List.of("Graph syntax error: " + e.getMessage() + "\n\n```\n" + graph.trim() + "\n```"), 0.0);
+                return result(List.of("Graph syntax error: " + e.getMessage(), graphContent(graph)), 0.0);
             }
         } catch (InvocationError e) {
             return result(List.of(e.getMessage()), 0.0);
@@ -77,6 +80,10 @@ public record ClassDiagramRenderingByCliVerification(String name, Double maxGrad
                 .collect(Collectors.joining("\n        ", "\n        ", ""));
             return result(List.of("Unhandled error, report to maintainer. " + e.getClass().getSimpleName() + ": " + e.getMessage() + indentedStackTrace), 0.0);
         }
+    }
+
+    private String graphContent(String graph) {
+        return "For graph: \n\n```\n" + graph + "```";
     }
 
     private String buildClassPath(List<URL> classPath, Path... additionalPaths) {

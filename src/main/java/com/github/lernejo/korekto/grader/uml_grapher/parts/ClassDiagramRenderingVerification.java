@@ -10,6 +10,7 @@ import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.ClassDiagram;
 import com.github.lernejo.korekto.toolkit.GradePart;
 import com.github.lernejo.korekto.toolkit.PartGrader;
 import net.bytebuddy.dynamic.loading.ByteArrayClassLoader;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -40,17 +41,19 @@ public record ClassDiagramRenderingVerification(String name, Double maxGrade, do
             TypesSupplier.Types types = typesSupplier.supply(context, byteArrayClassLoader);
             ClassLoader classLoaderForInvocation = context.newTmpMavenChildClassLoader(types.directory());
             String graph = invoke(classLoaderForInvocation, reloadFromAnotherClassloader(types.selectedTypes(), classLoaderForInvocation));
-            AstParser parser = new AstParser(new Lexer(new CharStream(graph)));
-            ClassDiagram diagram = new ModelTranslator().translate(parser.parseClassDiagram().get());
-            List<String> errors = classDiagramVerifier.verify(types, diagram);
-            if (!errors.isEmpty()) {
-                errors.add("For graph: \n\n```\n" + graph + "```");
+            try {
+                AstParser parser = new AstParser(new Lexer(new CharStream(graph)));
+                ClassDiagram diagram = new ModelTranslator().translate(parser.parseClassDiagram().get());
+                List<String> errors = classDiagramVerifier.verify(types, diagram);
+                if (!errors.isEmpty()) {
+                    errors.add(graphContent(graph));
+                }
+                return result(errors, (1.0 - max(0, errors.size() * errorRatioPenalty)) * maxGrade);
+            } catch (MissingTokenException e) {
+                return result(List.of("Graph syntax error: " + e.getMessage(), graphContent(graph)), 0.0);
             }
-            return result(errors, (1.0 - max(0, errors.size() * errorRatioPenalty)) * maxGrade);
         } catch (InvocationError e) {
             return result(List.of(e.getMessage()), 0.0);
-        } catch (MissingTokenException e) {
-            return result(List.of("Graph syntax error: " + e.getMessage()), 0.0);
         } catch (RuntimeException e) {
             e.printStackTrace();
             String indentedStackTrace = Arrays.stream(e.getStackTrace())
@@ -59,6 +62,10 @@ public record ClassDiagramRenderingVerification(String name, Double maxGrade, do
                 .collect(Collectors.joining("\n        ", "\n        ", ""));
             return result(List.of("Unhandled error, report to maintainer. " + e.getClass().getSimpleName() + ": " + e.getMessage() + indentedStackTrace), 0.0);
         }
+    }
+
+    private String graphContent(String graph) {
+        return "For graph: \n\n```\n" + graph + "```";
     }
 
     private Class<?>[] reloadFromAnotherClassloader(Class<?>[] selectedTypes, ClassLoader classLoader) {

@@ -10,7 +10,6 @@ import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.ClassDiagram;
 import com.github.lernejo.korekto.toolkit.GradePart;
 import com.github.lernejo.korekto.toolkit.PartGrader;
 import net.bytebuddy.dynamic.loading.ByteArrayClassLoader;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -41,9 +40,16 @@ public record ClassDiagramRenderingVerification(String name, Double maxGrade, do
             TypesSupplier.Types types = typesSupplier.supply(context, byteArrayClassLoader);
             ClassLoader classLoaderForInvocation = context.newTmpMavenChildClassLoader(types.directory());
             String graph = invoke(classLoaderForInvocation, reloadFromAnotherClassloader(types.selectedTypes(), classLoaderForInvocation));
+            if (graph.isBlank()) {
+                return result(List.of("Empty graph returned"), 0.0);
+            }
             try {
                 AstParser parser = new AstParser(new Lexer(new CharStream(graph)));
-                ClassDiagram diagram = new ModelTranslator().translate(parser.parseClassDiagram().get());
+                var classDiagramAst = parser.parseClassDiagram();
+                if (classDiagramAst.isEmpty()) {
+                    return result(List.of("Unparseable graph returned", graphContent(graph)), 0.0);
+                }
+                ClassDiagram diagram = new ModelTranslator().translate(classDiagramAst.get());
                 List<String> errors = classDiagramVerifier.verify(types, diagram);
                 if (!errors.isEmpty()) {
                     errors.add(graphContent(graph));

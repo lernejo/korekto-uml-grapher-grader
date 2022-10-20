@@ -58,10 +58,17 @@ public record ClassDiagramRenderingByCliVerification(String name, Double maxGrad
             }
 
             String graph = result.getOutput();
+            if (graph.isBlank()) {
+                return result(List.of("Empty graph returned"), 0.0);
+            }
 
             try {
                 AstParser parser = new AstParser(new Lexer(new CharStream(graph)));
-                ClassDiagram diagram = new ModelTranslator().translate(parser.parseClassDiagram().get());
+                var classDiagramAst = parser.parseClassDiagram();
+                if (classDiagramAst.isEmpty()) {
+                    return result(List.of("Unparseable graph returned", graphContent(graph)), 0.0);
+                }
+                ClassDiagram diagram = new ModelTranslator().translate(classDiagramAst.get());
                 List<String> errors = classDiagramVerifier.verify(types, diagram);
                 if (!errors.isEmpty()) {
                     errors.add(graphContent(graph));

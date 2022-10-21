@@ -2,6 +2,7 @@ package com.github.lernejo.korekto.grader.uml_grapher;
 
 import com.github.lernejo.korekto.grader.uml_grapher.parts.ClassDiagramRenderingByCliVerification;
 import com.github.lernejo.korekto.grader.uml_grapher.parts.ClassDiagramRenderingVerification;
+import com.github.lernejo.korekto.grader.uml_grapher.parts.PmdPartGrader;
 import com.github.lernejo.korekto.toolkit.GradePart;
 import com.github.lernejo.korekto.toolkit.Grader;
 import com.github.lernejo.korekto.toolkit.GradingConfiguration;
@@ -11,7 +12,6 @@ import com.github.lernejo.korekto.toolkit.partgrader.GitHistoryPartGrader;
 import com.github.lernejo.korekto.toolkit.partgrader.GitHubActionsPartGrader;
 import com.github.lernejo.korekto.toolkit.partgrader.JacocoCoveragePartGrader;
 import com.github.lernejo.korekto.toolkit.partgrader.MavenCompileAndTestPartGrader;
-import com.github.lernejo.korekto.toolkit.partgrader.PmdPartGrader;
 import com.github.lernejo.korekto.toolkit.thirdparty.pmd.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +54,7 @@ public class UmlGrapherGrader implements Grader<LaunchingContext> {
     private Collection<? extends PartGrader<LaunchingContext>> graders() {
         return List.of(
             new GitHistoryPartGrader<>("Git (proper descriptive messages)", -4.0D),
-            new PmdPartGrader<>("Coding style", -4.0D,
+            new PmdPartGrader("Coding style", -4.0D,
                 Rule.buildExcessiveClassLengthRule(100),
                 Rule.buildExcessiveMethodLengthRule(18),
                 Rule.buildFieldMandatoryModifierRule(2, "private", "final", "!static")

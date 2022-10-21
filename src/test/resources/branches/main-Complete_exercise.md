@@ -6,8 +6,8 @@ Votre note est de **18.5**/20.
     * `7c2a2da` All-in-1 --> 1 word is too short
 
 * Coding style: -1
-    * fr.lernejo.umlgrapher.GraphType
-      * L.6: The field `formatter` must have modifier `private`
+    * fr.lernejo.umlgrapher.Launcher
+      * L.12: The field `classes` must have modifier `final`
 
 * Part 1 - Compilation & Tests: 2/2
 * Part 2 - CI: 2/2

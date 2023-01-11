@@ -22,7 +22,7 @@
 
         <record-builder.version>34</record-builder.version>
 
-        <junit.version>5.9.1</junit.version>
+        <junit.version>5.9.2</junit.version>
         <assertj.version>3.23.1</assertj.version>
 
         <antlr4.version>4.11.1</antlr4.version>

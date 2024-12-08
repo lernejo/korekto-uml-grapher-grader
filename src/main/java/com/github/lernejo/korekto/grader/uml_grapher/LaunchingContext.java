@@ -9,9 +9,13 @@ import com.github.lernejo.korekto.toolkit.misc.ThrowingFunction;
 import com.github.lernejo.korekto.toolkit.partgrader.MavenContext;
 import org.apache.maven.cli.MavenExposer;
 
+import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -64,6 +68,7 @@ public class LaunchingContext extends GradingContext implements MavenContext {
         return new URLClassLoader(urls, getMavenMainClassloader());
     }
 
+
     public List<URL> getMavenClassPath() {
         initClassPathAndClassLoader();
         return List.copyOf(mavenClassPath);
@@ -79,8 +84,18 @@ public class LaunchingContext extends GradingContext implements MavenContext {
 
     private void initClassPathAndClassLoader() {
         if (mavenClassPath == null) {
-            mavenClassPath = MavenClassloader.getMavenClassPath(mavenExposer, getExercise());
+            mavenClassPath = new ArrayList<>(MavenClassloader.getMavenClassPath(mavenExposer, getExercise()));
+            mavenClassPath.add(getCurrentCompiledClasses()); // So we can access our classes such as ErrorTester
+
             mavenMainClassloader = MavenClassloader.buildIsolatedClassLoader(mavenClassPath);
+        }
+    }
+
+    private URL getCurrentCompiledClasses() {
+        try {
+            return Paths.get("").toAbsolutePath().resolve("target").resolve("classes").toUri().toURL();
+        } catch (MalformedURLException e) {
+            throw new UncheckedIOException(e);
         }
     }
 

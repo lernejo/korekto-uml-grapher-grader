@@ -3,18 +3,15 @@ package com.github.lernejo.korekto.grader.uml_grapher;
 import com.github.lernejo.korekto.grader.uml_grapher.parts.ClassDiagramRenderingByCliVerification;
 import com.github.lernejo.korekto.grader.uml_grapher.parts.ClassDiagramRenderingVerification;
 import com.github.lernejo.korekto.grader.uml_grapher.parts.PmdPartGrader;
-import com.github.lernejo.korekto.toolkit.GradePart;
 import com.github.lernejo.korekto.toolkit.Grader;
 import com.github.lernejo.korekto.toolkit.GradingConfiguration;
 import com.github.lernejo.korekto.toolkit.PartGrader;
-import com.github.lernejo.korekto.toolkit.misc.HumanReadableDuration;
 import com.github.lernejo.korekto.toolkit.partgrader.GitHistoryPartGrader;
 import com.github.lernejo.korekto.toolkit.partgrader.GitHubActionsPartGrader;
 import com.github.lernejo.korekto.toolkit.partgrader.JacocoCoveragePartGrader;
 import com.github.lernejo.korekto.toolkit.partgrader.MavenCompileAndTestPartGrader;
 import com.github.lernejo.korekto.toolkit.thirdparty.pmd.Rule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,34 +21,26 @@ import static com.github.lernejo.korekto.grader.uml_grapher.parts.TypesSupplier.
 
 public class UmlGrapherGrader implements Grader<LaunchingContext> {
 
-    private final Logger logger = LoggerFactory.getLogger(UmlGrapherGrader.class);
-
+    @NotNull
     @Override
-    public String slugToRepoUrl(String login) {
+    public String name() {
+        return "UML grapher project";
+    }
+
+    @NotNull
+    @Override
+    public String slugToRepoUrl(@NotNull String login) {
         return "https://github.com/" + login + "/uml_grapher";
     }
 
+    @NotNull
     @Override
-    public void run(LaunchingContext context) {
-        context.getGradeDetails().getParts().addAll(grade(context));
+    public LaunchingContext gradingContext(@NotNull GradingConfiguration configuration) {
+        return new LaunchingContext(configuration);
     }
 
-    private Collection<? extends GradePart> grade(LaunchingContext context) {
-        return graders().stream()
-            .map(g -> applyPartGrader(context, g))
-            .toList();
-    }
-
-    private GradePart applyPartGrader(LaunchingContext context, PartGrader<LaunchingContext> g) {
-        long startTime = System.currentTimeMillis();
-        try {
-            return g.grade(context);
-        } finally {
-            logger.debug(g.name() + " in " + HumanReadableDuration.toString(System.currentTimeMillis() - startTime));
-        }
-    }
-
-    private Collection<? extends PartGrader<LaunchingContext>> graders() {
+    @NotNull
+    public Collection<PartGrader<LaunchingContext>> graders() {
         return List.of(
             new GitHistoryPartGrader<>("Git (proper descriptive messages)", -4.0D),
             new PmdPartGrader("Coding style", -4.0D,
@@ -84,10 +73,5 @@ public class UmlGrapherGrader implements Grader<LaunchingContext> {
     @Override
     public boolean needsWorkspaceReset() {
         return true;
-    }
-
-    @Override
-    public LaunchingContext gradingContext(GradingConfiguration configuration) {
-        return new LaunchingContext(configuration);
     }
 }

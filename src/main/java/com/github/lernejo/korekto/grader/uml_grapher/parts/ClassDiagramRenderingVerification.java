@@ -10,6 +10,7 @@ import com.github.lernejo.korekto.grader.uml_grapher.mermaid.model.ClassDiagram;
 import com.github.lernejo.korekto.toolkit.GradePart;
 import com.github.lernejo.korekto.toolkit.PartGrader;
 import net.bytebuddy.dynamic.loading.ByteArrayClassLoader;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -28,6 +29,7 @@ public record ClassDiagramRenderingVerification(String name, Double maxGrade, do
     private static final String GRAPH_CLASS_NAME = "fr.lernejo.umlgrapher.UmlGraph";
     private static final String GRAPH_TYPE_CLASS_NAME = "fr.lernejo.umlgrapher.GraphType";
 
+    @NotNull
     @Override
     public GradePart grade(LaunchingContext context) {
         if (context.hasCompilationFailed()) {

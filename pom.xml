@@ -11,6 +11,7 @@
     <properties>
         <github.login>none</github.login>
         <github.token>none</github.token>
+        <korekto.report.path>target/report.json</korekto.report.path>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
@@ -179,6 +180,7 @@
                         <argument>-Dgithub_token=${github.token}</argument>
                         <argument>com.github.lernejo.korekto.toolkit.launcher.GradingJobLauncher</argument>
                         <argument>--slug=${github.login}</argument>
+                        <argument>-r=${korekto.report.path}</argument>
                     </arguments>
                 </configuration>
             </plugin>

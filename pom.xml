@@ -26,7 +26,7 @@
         <record-builder.version>47</record-builder.version>
 
         <junit.version>5.13.4</junit.version>
-        <assertj.version>3.27.3</assertj.version>
+        <assertj.version>3.27.4</assertj.version>
 
         <antlr4.version>4.13.2</antlr4.version>
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>

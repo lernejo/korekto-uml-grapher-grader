@@ -29,7 +29,7 @@
         <assertj.version>3.27.5</assertj.version>
 
         <antlr4.version>4.13.2</antlr4.version>
-        <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
         <exec-maven-plugin.version>3.5.1</exec-maven-plugin.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>

@@ -23,7 +23,7 @@
         <maven-resolver.version>1.9.27</maven-resolver.version>
         <byte-buddy.version>1.18.10</byte-buddy.version>
 
-        <record-builder.version>52</record-builder.version>
+        <record-builder.version>53</record-builder.version>
 
         <junit.version>6.1.0</junit.version>
         <assertj.version>3.27.7</assertj.version>

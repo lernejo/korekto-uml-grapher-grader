@@ -21,7 +21,7 @@
         <logback-classic.version>1.6.5</logback-classic.version>
         <maven.version>3.9.16</maven.version>
         <maven-resolver.version>1.9.27</maven-resolver.version>
-        <byte-buddy.version>1.18.15</byte-buddy.version>
+        <byte-buddy.version>1.18.16</byte-buddy.version>
 
         <record-builder.version>53</record-builder.version>
 
